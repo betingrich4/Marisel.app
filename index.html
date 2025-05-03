@@ -3,476 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Hub - All Services</title>
+    <title>Cloud Music Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ===== BASE RESET ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        /* ===== CORE LAYOUT ===== */
-        body, html {
-            width: 100%;
-            height: 100%;
             font-family: 'Segoe UI', Arial, sans-serif;
-            color: #e0e0e0;
-            overflow: hidden;
+        }
+        
+        body {
+            background: #0f0f0f;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+        
+        header {
+            padding: 20px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff0000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            font-size: 28px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        .search-box input {
+            flex: 1;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 30px;
+            background: #282828;
+            color: #fff;
+            font-size: 16px;
+        }
+        
+        .search-box button {
+            padding: 12px 20px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .player-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .now-playing {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+        
+        .album-art {
+            width: 250px;
+            height: 250px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .song-info {
+            flex: 1;
+        }
+        
+        .song-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        
+        .song-artist {
+            font-size: 20px;
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+        
+        .player-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: #333;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: #ff0000;
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+        
+        .time-info {
+            display: flex;
+            justify-content: space-between;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        .controls {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 30px;
         }
-
-        /* ===== VIDEO BACKGROUND ===== */
-        #bgVideo {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
-            z-index: -1;
-            object-fit: cover;
-            filter: brightness(0.6);
-        }
-
-        /* ===== TRANSPARENT CENTERED CONTAINER ===== */
-        .container {
-            width: 90%;
-            max-width: 500px;
-            padding: 2.5rem;
-            text-align: center;
-            background: rgba(10, 10, 20, 0.3);
-            border-radius: 16px;
-            border: 1px solid rgba(0, 255, 204, 0.7);
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.3);
-            backdrop-filter: blur(5px);
-            margin: 1rem;
-        }
-
-        /* ===== TYPOGRAPHY ===== */
-        h1 {
-            font-size: 2.2rem;
-            margin: 0 0 0.5rem 0;
-            color: #00ffcc;
-            text-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .subtitle {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* ===== FORM ELEMENTS ===== */
-        input {
-            width: 100%;
-            padding: 15px 20px;
-            margin: 0 0 1rem 0;
-            background: rgba(20, 25, 30, 0.7);
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-
-        input:focus {
-            border-color: #ff00ff;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
-        }
-
-        input::placeholder {
-            color: rgba(0, 255, 204, 0.7);
-        }
-
-        /* ===== BUTTONS ===== */
-        button {
-            width: 100%;
-            padding: 15px;
-            margin: 0.5rem 0;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            color: white;
-            font-size: 1.05rem;
-            font-weight: 600;
+        
+        .control-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
-
-        button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        
+        .control-btn:hover {
+            color: #ff0000;
         }
-
-        /* ===== ENHANCED TOGGLE MENU ===== */
-        .menu-toggle {
-            position: fixed;
-            top: 25px;
-            left: 25px;
-            width: 32px;
-            height: 24px;
-            cursor: pointer;
-            z-index: 1000;
+        
+        .play-pause {
+            font-size: 40px;
+            background: #ff0000;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .menu-toggle span {
-            display: block;
-            width: 100%;
-            height: 3px;
-            background: #00ffcc;
-            border-radius: 3px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 5px rgba(0, 255, 204, 0.7);
-        }
-
-        .menu-toggle:hover span {
-            background: #ff00ff;
-            box-shadow: 0 0 8px rgba(255, 0, 255, 0.8);
-        }
-
-        /* ===== SIDE MENU WITH COLORS ===== */
-        .menu {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background: rgba(10, 15, 20, 0.98);
-            transition: all 0.4s ease;
-            z-index: 999;
-            padding-top: 80px;
-            box-shadow: 5px 0 30px rgba(0, 0, 0, 0.7);
-            border-right: 1px solid rgba(0, 255, 204, 0.5);
-        }
-
-        .menu.active {
-            left: 0;
-        }
-
-        .menu ul {
-            list-style: none;
-            padding: 0 25px;
-        }
-
-        .menu ul li {
-            margin: 22px 0;
-        }
-
-        .menu ul li a {
-            color: #e0e0e0;
-            text-decoration: none;
-            font-size: 1.1rem;
-            display: block;
-            padding: 12px 15px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.05);
-            border-left: 3px solid transparent;
-        }
-
-        .menu ul li a:hover {
-            background: rgba(0, 255, 204, 0.15);
-            color: #00ffcc;
-            transform: translateX(10px);
-            border-left: 3px solid #00ffcc;
-        }
-
-        /* External link arrows */
-        .menu ul li a[target="_blank"]::after {
-            content: " ↗";
-            font-size: 0.9em;
-            color: rgba(0, 255, 204, 0.8);
-            margin-left: 5px;
-            transition: all 0.3s ease;
-        }
-
-        .menu ul li a[target="_blank"]:hover::after {
-            color: #ff00ff;
-            transform: translateX(3px);
-        }
-
-        /* Special menu link colors */
-        .menu ul li a[href^="https://wa.me"],
-        .menu ul li a[href^="https://whatsapp.com"] {
-            color: #25D366;
-            border-left: 3px solid rgba(37, 211, 102, 0.3);
-        }
-
-        .menu ul li a[href^="https://wa.me"]:hover,
-        .menu ul li a[href^="https://whatsapp.com"]:hover {
-            background: rgba(37, 211, 102, 0.15);
-            border-left: 3px solid #25D366;
-        }
-
-        .menu ul li a[href^="https://jiod"] {
-            color: #00ccff;
-            border-left: 3px solid rgba(0, 204, 255, 0.3);
-        }
-
-        .menu ul li a[href^="https://jiod"]:hover {
-            background: rgba(0, 204, 255, 0.15);
-            border-left: 3px solid #00ccff;
-        }
-
-        /* ===== STATUS MESSAGE COLORS ===== */
-        .status-message {
-            padding: 1.25rem;
-            margin: 1.25rem 0;
-            border-radius: 10px;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .status-success {
-            background: rgba(0, 255, 204, 0.1);
-            border: 1px solid #00ffcc;
-            color: #00ffcc;
-        }
-
-        .status-warning {
-            background: rgba(255, 204, 0, 0.1);
-            border: 1px solid #ffcc00;
-            color: #ffcc00;
-        }
-
-        .status-error {
-            background: rgba(255, 51, 51, 0.1);
-            border: 1px solid #ff3333;
-            color: #ff3333;
-        }
-
-        .status-info {
-            background: rgba(51, 153, 255, 0.1);
-            border: 1px solid #3399ff;
-            color: #3399ff;
-        }
-
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 768px) {
-            .container {
-                padding: 2rem;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            .menu {
-                width: 250px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 1.5rem;
-            }
-            h1 {
-                font-size: 1.6rem;
-            }
-            input, button {
-                padding: 12px 15px;
-            }
-            .menu {
-                width: 220px;
-                padding-top: 70px;
-            }
-            .menu-toggle {
-                top: 20px;
-                left: 20px;
-                width: 28px;
-            }
-        }
-
-        /* ===== QUICK ACCESS GRID ===== */
-        .quick-access {
-            margin-top: 2rem;
-        }
-
-        .quick-access h3 {
-            font-size: 1.5rem;
-            color: #00ffcc;
-            margin-bottom: 1rem;
-        }
-
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-
-        .grid-item {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            text-decoration: none;
-            color: #e0e0e0;
-            transition: all 0.3s ease;
+            justify-content: center;
         }
-
-        .grid-item:hover {
+        
+        .playlist {
+            margin-top: 40px;
+        }
+        
+        .playlist-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+        
+        .song-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .song-card {
+            background: #282828;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .song-card:hover {
+            background: #383838;
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 255, 204, 0.3);
-            background: rgba(0, 255, 204, 0.1);
         }
-
-        .grid-item i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            color: #00ffcc;
+        
+        .song-card-img {
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
         }
-
-        .grid-item span {
-            font-size: 0.9rem;
-            text-align: center;
+        
+        .song-card-title {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .song-card-artist {
+            font-size: 14px;
+            color: #aaa;
+        }
+        
+        @media (max-width: 768px) {
+            .now-playing {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .album-art {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .controls {
+                gap: 15px;
+            }
+            
+            .play-pause {
+                width: 60px;
+                height: 60px;
+                font-size: 30px;
+            }
         }
     </style>
 </head>
 <body>
-    <video autoplay muted loop id="bgVideo">
-        <source src="https://assets.mixkit.co/videos/preview/mixkit-network-of-lines-in-motion-1638-large.mp4" type="video/mp4">
-    </video>
-
-    <!-- Menu Toggle -->
-    <div class="menu-toggle">
-        <span></span>
-        <span></span>
-        <span></span>
-    </div>
-
-    <!-- Side Menu -->
-    <div class="menu">
-        <ul>
-            <li><a href="#" class="active">Home</a></li>
-            <li class="menu-category">AI Services</li>
-            <li><a href="ai/openai.html">OpenAI Chat</a></li>
-            <li><a href="ai/gemini.html">Gemini AI</a></li>
-            <li><a href="ai/llama.html">LLaMA AI</a></li>
-            <li><a href="ai/image-analysis.html">Image Analysis</a></li>
-            
-            <li class="menu-category">Downloaders</li>
-            <li><a href="downloaders/facebook.html">Facebook Downloader</a></li>
-            <li><a href="downloaders/tiktok.html">TikTok Downloader</a></li>
-            <li><a href="downloaders/instagram.html">Instagram Downloader</a></li>
-            <li><a href="downloaders/youtube.html">YouTube Downloader</a></li>
-            <li><a href="downloaders/apk.html">APK Downloader</a></li>
-            
-            <li class="menu-category">Creative Tools</li>
-            <li><a href="tools/logo-maker.html">Logo Maker</a></li>
-            <li><a href="tools/url-shortener.html">URL Shortener</a></li>
-            <li><a href="tools/text-effects.html">Text Effects</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
     <div class="container">
-        <h1>API Services Hub</h1>
-        <p class="subtitle">Access all web services in one place</p>
+        <header>
+            <div class="logo">
+                <i class="fab fa-youtube"></i>
+                <span>Cloud Music</span>
+            </div>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search for songs...">
+                <button id="searchBtn"><i class="fas fa-search"></i></button>
+            </div>
+        </header>
         
-        <div class="quick-access">
-            <h3>Quick Access</h3>
-            <div class="grid-container">
-                <a href="downloaders/facebook.html" class="grid-item">
-                    <i class="fab fa-facebook"></i>
-                    <span>Facebook Downloader</span>
-                </a>
-                <a href="downloaders/tiktok.html" class="grid-item">
-                    <i class="fab fa-tiktok"></i>
-                    <span>TikTok Downloader</span>
-                </a>
-                <a href="ai/openai.html" class="grid-item">
-                    <i class="fas fa-robot"></i>
-                    <span>AI Chat</span>
-                </a>
-                <a href="downloaders/apk.html" class="grid-item">
-                    <i class="fas fa-download"></i>
-                    <span>APK Downloader</span>
-                </a>
+        <div class="player-container">
+            <div class="now-playing">
+                <img src="https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="Album Art" class="album-art" id="albumArt">
+                <div class="song-info">
+                    <h1 class="song-title" id="songTitle">Not Playing</h1>
+                    <p class="song-artist" id="songArtist">Search for a song to begin</p>
+                    
+                    <div class="player-controls">
+                        <div class="progress-container" id="progressContainer">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                        <div class="time-info">
+                            <span id="currentTime">0:00</span>
+                            <span id="duration">0:00</span>
+                        </div>
+                        <div class="controls">
+                            <button class="control-btn" id="prevBtn"><i class="fas fa-step-backward"></i></button>
+                            <button class="control-btn play-pause" id="playPauseBtn"><i class="fas fa-play"></i></button>
+                            <button class="control-btn" id="nextBtn"><i class="fas fa-step-forward"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="playlist">
+                <h2 class="playlist-title">Search Results</h2>
+                <div class="song-list" id="songList">
+                    <!-- Songs will be added here dynamically -->
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Menu Toggle
-        document.querySelector('.menu-toggle').addEventListener('click', function() {
-            document.querySelector('.menu').classList.toggle('active');
-            this.querySelectorAll('span').forEach(span => {
-                span.classList.toggle('active');
-            });
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.querySelector('.menu');
-            const menuToggle = document.querySelector('.menu-toggle');
+        // DOM Elements
+        const searchInput = document.getElementById('searchInput');
+        const searchBtn = document.getElementById('searchBtn');
+        const albumArt = document.getElementById('albumArt');
+        const songTitle = document.getElementById('songTitle');
+        const songArtist = document.getElementById('songArtist');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progressContainer');
+        const currentTimeEl = document.getElementById('currentTime');
+        const durationEl = document.getElementById('duration');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const songList = document.getElementById('songList');
+        
+        // Audio element
+        const audio = new Audio();
+        let isPlaying = false;
+        let currentSongIndex = 0;
+        let songs = [];
+        
+        // Format time (seconds to MM:SS)
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+        
+        // Update progress bar
+        function updateProgress() {
+            const { currentTime, duration } = audio;
+            const progressPercent = (currentTime / duration) * 100;
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeEl.textContent = formatTime(currentTime);
+        }
+        
+        // Set progress when clicked on progress bar
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = audio.duration;
+            audio.currentTime = (clickX / width) * duration;
+        }
+        
+        // Play song
+        function playSong() {
+            audio.play();
+            isPlaying = true;
+            playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+        
+        // Pause song
+        function pauseSong() {
+            audio.pause();
+            isPlaying = false;
+            playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+        }
+        
+        // Load and play song
+        function loadSong(song) {
+            songTitle.textContent = song.title;
+            songArtist.textContent = song.artist;
+            albumArt.src = song.thumbnail;
+            audio.src = song.audioUrl;
             
-            if (!menu.contains(event.target) && !menuToggle.contains(event.target)) {
-                menu.classList.remove('active');
-                menuToggle.querySelectorAll('span').forEach(span => {
-                    span.classList.remove('active');
-                });
+            audio.addEventListener('loadedmetadata', () => {
+                durationEl.textContent = formatTime(audio.duration);
+            });
+            
+            playSong();
+        }
+        
+        // Previous song
+        function prevSong() {
+            currentSongIndex--;
+            if (currentSongIndex < 0) {
+                currentSongIndex = songs.length - 1;
             }
-        });
-
-        // API Call Function
-        async function callAPI(endpoint, params, method = 'GET') {
+            loadSong(songs[currentSongIndex]);
+        }
+        
+        // Next song
+        function nextSong() {
+            currentSongIndex++;
+            if (currentSongIndex > songs.length - 1) {
+                currentSongIndex = 0;
+            }
+            loadSong(songs[currentSongIndex]);
+        }
+        
+        // Search for songs
+        async function searchSongs(query) {
             try {
-                let url = endpoint;
-                if (method === 'GET' && params) {
-                    url += '?' + new URLSearchParams(params).toString();
-                }
+                // In a real app, you would call the YouTube API here
+                // For demo purposes, we'll simulate search results
                 
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json'
+                // Simulate API call delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Mock data - in a real app, you would get this from YouTube API
+                songs = [
+                    {
+                        title: "Yatapita",
+                        artist: "Diamond Platnumz",
+                        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_1/maxresdefault.jpg",
+                        audioUrl: "https://www.youtube.com/watch?v=VIDEO_ID_1"
                     },
-                    body: method !== 'GET' ? JSON.stringify(params) : null
-                });
+                    {
+                        title: "La La La",
+                        artist: "Yo Yo Honey Singh",
+                        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_2/maxresdefault.jpg",
+                        audioUrl: "https://www.youtube.com/watch?v=VIDEO_ID_2"
+                    },
+                    {
+                        title: "Shape of You",
+                        artist: "Ed Sheeran",
+                        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_3/maxresdefault.jpg",
+                        audioUrl: "https://www.youtube.com/watch?v=VIDEO_ID_3"
+                    },
+                    {
+                        title: "Blinding Lights",
+                        artist: "The Weeknd",
+                        thumbnail: "https://i.ytimg.com/vi/VIDEO_ID_4/maxresdefault.jpg",
+                        audioUrl: "https://www.youtube.com/watch?v=VIDEO_ID_4"
+                    }
+                ];
                 
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                // Update the song list in the UI
+                updateSongList();
                 
-                const contentType = response.headers.get('content-type');
-                if (contentType && contentType.includes('application/json')) {
-                    return await response.json();
-                } else {
-                    return await response.text();
+                // Load the first song
+                if (songs.length > 0) {
+                    currentSongIndex = 0;
+                    loadSong(songs[0]);
                 }
             } catch (error) {
-                console.error('API Call Failed:', error);
-                throw error;
+                console.error('Error searching songs:', error);
+                alert('Failed to search for songs. Please try again.');
             }
         }
-
-        // Status Message Display
-        function showStatus(message, type = 'info', duration = 3000) {
-            const statusDiv = document.createElement('div');
-            statusDiv.className = `status-message status-${type}`;
-            statusDiv.textContent = message;
+        
+        // Update the song list UI
+        function updateSongList() {
+            songList.innerHTML = '';
             
-            const container = document.querySelector('.container') || document.body;
-            container.appendChild(statusDiv);
-            
-            if (duration > 0) {
-                setTimeout(() => {
-                    statusDiv.remove();
-                }, duration);
-            }
-            
-            return statusDiv;
+            songs.forEach((song, index) => {
+                const songCard = document.createElement('div');
+                songCard.className = 'song-card';
+                songCard.innerHTML = `
+                    <img src="${song.thumbnail}" alt="${song.title}" class="song-card-img">
+                    <h3 class="song-card-title">${song.title}</h3>
+                    <p class="song-card-artist">${song.artist}</p>
+                `;
+                
+                songCard.addEventListener('click', () => {
+                    currentSongIndex = index;
+                    loadSong(song);
+                });
+                
+                songList.appendChild(songCard);
+            });
         }
+        
+        // Event listeners
+        playPauseBtn.addEventListener('click', () => {
+            isPlaying ? pauseSong() : playSong();
+        });
+        
+        prevBtn.addEventListener('click', prevSong);
+        nextBtn.addEventListener('click', nextSong);
+        
+        audio.addEventListener('timeupdate', updateProgress);
+        audio.addEventListener('ended', nextSong);
+        
+        progressContainer.addEventListener('click', setProgress);
+        
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (query) {
+                searchSongs(query);
+            }
+        });
+        
+        // Initialize with some songs
+        searchSongs('popular songs');
     </script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
-                    </html>
+</html>
